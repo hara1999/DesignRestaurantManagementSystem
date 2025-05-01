@@ -5,7 +5,7 @@ import (
 	"os"
 
 	"DesignRestaurantManagementSystem/factory"
-	"DesignRestaurantManagementSystem/handlers"
+	"DesignRestaurantManagementSystem/http"
 	paymentModel "DesignRestaurantManagementSystem/models/payment"
 	inventoryService "DesignRestaurantManagementSystem/services/inventory"
 	orderService "DesignRestaurantManagementSystem/services/order"
@@ -25,7 +25,7 @@ func main() {
 	orderService := orderService.NewOrderManagementService(paymentFactory, inventoryService, restaurantService)
 
 	// Initialize router with all handlers
-	router := handlers.NewRouter(
+	router := http.NewRouter(
 		restaurantService,
 		orderService,
 		paymentFactory,

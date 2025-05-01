@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 
+	"DesignRestaurantManagementSystem/interfaces"
 	menuModel "DesignRestaurantManagementSystem/models/menu"
 	tableModel "DesignRestaurantManagementSystem/models/table"
 )
@@ -14,7 +15,7 @@ type RestaurantService struct {
 	Table []*tableModel.Table
 }
 
-func NewRestaurant(name string) *RestaurantService {
+func NewRestaurant(name string) interfaces.RestaurantServiceInterface {
 	return &RestaurantService{
 		Name:  name,
 		Menu:  make([]*menuModel.Menu, 0),

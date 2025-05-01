@@ -3,6 +3,7 @@ package service
 import (
 	"errors"
 
+	"DesignRestaurantManagementSystem/interfaces"
 	employeeModel "DesignRestaurantManagementSystem/models/employee"
 )
 
@@ -10,7 +11,7 @@ type EmployeeManagementService struct {
 	employees []*employeeModel.Employee
 }
 
-func NewEmployeeManagementService() *EmployeeManagementService {
+func NewEmployeeManagementService() interfaces.EmployeeManagementServiceInterface {
 	return &EmployeeManagementService{
 		employees: make([]*employeeModel.Employee, 0),
 	}

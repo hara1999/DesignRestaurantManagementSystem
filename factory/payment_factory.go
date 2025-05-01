@@ -3,25 +3,25 @@ package factory
 import (
 	"errors"
 
+	"DesignRestaurantManagementSystem/interfaces"
 	paymentModel "DesignRestaurantManagementSystem/models/payment"
-	paymentService "DesignRestaurantManagementSystem/services/payment"
 )
 
 type PaymentFactory struct {
-	Method map[paymentModel.PaymentMode]paymentService.PaymentManagementService
+	Method map[paymentModel.PaymentMode]interfaces.PaymentManagementServiceInterface
 }
 
 func NewPaymentFactory() *PaymentFactory {
 	return &PaymentFactory{
-		make(map[paymentModel.PaymentMode]paymentService.PaymentManagementService),
+		make(map[paymentModel.PaymentMode]interfaces.PaymentManagementServiceInterface),
 	}
 }
 
-func (factory *PaymentFactory) AddPaymentService(paymentMode paymentModel.PaymentMode, pms paymentService.PaymentManagementService) {
+func (factory *PaymentFactory) AddPaymentService(paymentMode paymentModel.PaymentMode, pms interfaces.PaymentManagementServiceInterface) {
 	factory.Method[paymentMode] = pms
 }
 
-func (factory *PaymentFactory) GetPaymentService(paymentMode paymentModel.PaymentMode) (paymentService.PaymentManagementService, error) {
+func (factory *PaymentFactory) GetPaymentService(paymentMode paymentModel.PaymentMode) (interfaces.PaymentManagementServiceInterface, error) {
 
 	pms, ok := factory.Method[paymentMode]
 	if !ok {

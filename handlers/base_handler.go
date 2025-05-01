@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"DesignRestaurantManagementSystem/interfaces"
 	"log/slog"
 
 	"github.com/gin-gonic/gin"
@@ -10,7 +11,7 @@ type BaseHandler struct {
 	logger *slog.Logger
 }
 
-func NewBaseHandler(logger *slog.Logger) *BaseHandler {
+func NewBaseHandler(logger *slog.Logger) interfaces.BaseHandlerInterface {
 	return &BaseHandler{
 		logger: logger,
 	}

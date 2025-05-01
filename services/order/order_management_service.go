@@ -2,14 +2,13 @@ package order
 
 import (
 	"DesignRestaurantManagementSystem/factory"
+	"DesignRestaurantManagementSystem/interfaces"
 	billModel "DesignRestaurantManagementSystem/models/bill"
 	dishModel "DesignRestaurantManagementSystem/models/dish"
 	itemModel "DesignRestaurantManagementSystem/models/item"
 	menuModel "DesignRestaurantManagementSystem/models/menu"
 	orderModel "DesignRestaurantManagementSystem/models/order"
 	paymentModel "DesignRestaurantManagementSystem/models/payment"
-	inventoryService "DesignRestaurantManagementSystem/services/inventory"
-	restaurantService "DesignRestaurantManagementSystem/services/restaurant"
 	"DesignRestaurantManagementSystem/utils"
 	"errors"
 	"fmt"
@@ -17,12 +16,12 @@ import (
 
 type OrderManagementService struct {
 	paymentFactory *factory.PaymentFactory
-	inventory      *inventoryService.InventoryManagementService
-	restaurant     *restaurantService.RestaurantService
+	inventory      interfaces.InventoryManagementServiceInterface
+	restaurant     interfaces.RestaurantServiceInterface
 	orders         []*orderModel.Order
 }
 
-func NewOrderManagementService(paymentFactory *factory.PaymentFactory, inventory *inventoryService.InventoryManagementService, restaurant *restaurantService.RestaurantService) *OrderManagementService {
+func NewOrderManagementService(paymentFactory *factory.PaymentFactory, inventory interfaces.InventoryManagementServiceInterface, restaurant interfaces.RestaurantServiceInterface) interfaces.OrderManagementServiceInterface {
 	return &OrderManagementService{
 		paymentFactory: paymentFactory,
 		inventory:      inventory,
@@ -118,7 +117,7 @@ func (os *OrderManagementService) PlaceOrder(dishName []string, menuType menuMod
 		return nil, fmt.Errorf("PaymentMode %s: %w", paymentMode, err)
 	}
 
-	bill, err := paymentService.Process(order)
+	bill, err := paymentService.ProcessPayment(order)
 	if err != nil {
 		return nil, fmt.Errorf("payment failed!! try again: %w", err)
 	}

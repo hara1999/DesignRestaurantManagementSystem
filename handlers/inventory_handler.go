@@ -1,21 +1,21 @@
 package handlers
 
 import (
+	"DesignRestaurantManagementSystem/interfaces"
 	"DesignRestaurantManagementSystem/models/item"
-	"DesignRestaurantManagementSystem/services/inventory"
 
 	"github.com/gin-gonic/gin"
 )
 
 type InventoryHandler struct {
-	*BaseHandler
-	inventoryService *inventory.InventoryManagementService
+	interfaces.BaseHandlerInterface
+	inventoryService interfaces.InventoryManagementServiceInterface
 }
 
-func NewInventoryHandler(base *BaseHandler, service *inventory.InventoryManagementService) *InventoryHandler {
+func NewInventoryHandler(base interfaces.BaseHandlerInterface, service interfaces.InventoryManagementServiceInterface) interfaces.InventoryHandlerInterface {
 	return &InventoryHandler{
-		BaseHandler:      base,
-		inventoryService: service,
+		BaseHandlerInterface: base,
+		inventoryService:     service,
 	}
 }
 

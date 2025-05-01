@@ -1,38 +1,37 @@
-package handlers
+package http
 
 import (
 	"DesignRestaurantManagementSystem/factory"
-	"DesignRestaurantManagementSystem/services/inventory"
-	"DesignRestaurantManagementSystem/services/order"
-	"DesignRestaurantManagementSystem/services/restaurant"
+	"DesignRestaurantManagementSystem/handlers"
+	"DesignRestaurantManagementSystem/interfaces"
 	"log/slog"
 
 	"github.com/gin-gonic/gin"
 )
 
 type Router struct {
-	restaurantHandler *RestaurantHandler
-	orderHandler      *OrderHandler
-	paymentHandler    *PaymentHandler
-	inventoryHandler  *InventoryHandler
-	menuHandler       *MenuHandler
+	restaurantHandler interfaces.RestaurantHandlerInterface
+	orderHandler      interfaces.OrderHandlerInterface
+	paymentHandler    interfaces.PaymentHandlerInterface
+	inventoryHandler  interfaces.InventoryHandlerInterface
+	menuHandler       interfaces.MenuHandlerInterface
 }
 
 func NewRouter(
-	restaurantService *restaurant.RestaurantService,
-	orderService *order.OrderManagementService,
+	restaurantService interfaces.RestaurantServiceInterface,
+	orderService interfaces.OrderManagementServiceInterface,
 	paymentFactory *factory.PaymentFactory,
-	inventoryService *inventory.InventoryManagementService,
+	inventoryService interfaces.InventoryManagementServiceInterface,
 	logger *slog.Logger,
 ) *Router {
-	baseHandler := NewBaseHandler(logger)
+	baseHandler := handlers.NewBaseHandler(logger)
 
 	return &Router{
-		restaurantHandler: NewRestaurantHandler(baseHandler, restaurantService),
-		orderHandler:      NewOrderHandler(baseHandler, orderService),
-		paymentHandler:    NewPaymentHandler(baseHandler, paymentFactory),
-		inventoryHandler:  NewInventoryHandler(baseHandler, inventoryService),
-		menuHandler:       NewMenuHandler(baseHandler, restaurantService),
+		restaurantHandler: handlers.NewRestaurantHandler(baseHandler, restaurantService),
+		orderHandler:      handlers.NewOrderHandler(baseHandler, orderService),
+		paymentHandler:    handlers.NewPaymentHandler(baseHandler, paymentFactory),
+		inventoryHandler:  handlers.NewInventoryHandler(baseHandler, inventoryService),
+		menuHandler:       handlers.NewMenuHandler(baseHandler, restaurantService),
 	}
 }
 

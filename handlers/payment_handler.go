@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"DesignRestaurantManagementSystem/factory"
+	"DesignRestaurantManagementSystem/interfaces"
 	"DesignRestaurantManagementSystem/models/order"
 	"DesignRestaurantManagementSystem/models/payment"
 
@@ -9,14 +10,14 @@ import (
 )
 
 type PaymentHandler struct {
-	*BaseHandler
+	interfaces.BaseHandlerInterface
 	paymentFactory *factory.PaymentFactory
 }
 
-func NewPaymentHandler(base *BaseHandler, paymentFactory *factory.PaymentFactory) *PaymentHandler {
+func NewPaymentHandler(base interfaces.BaseHandlerInterface, paymentFactory *factory.PaymentFactory) interfaces.PaymentHandlerInterface {
 	return &PaymentHandler{
-		BaseHandler:    base,
-		paymentFactory: paymentFactory,
+		BaseHandlerInterface: base,
+		paymentFactory:       paymentFactory,
 	}
 }
 
@@ -43,7 +44,7 @@ func (h *PaymentHandler) ProcessPayment(c *gin.Context) {
 		return
 	}
 
-	bill, err := paymentService.Process(mockOrder)
+	bill, err := paymentService.ProcessPayment(mockOrder)
 	if err != nil {
 		h.ErrorResponse(c, 400, err.Error())
 		return

@@ -1,21 +1,21 @@
 package handlers
 
 import (
+	"DesignRestaurantManagementSystem/interfaces"
 	"DesignRestaurantManagementSystem/models/table"
-	"DesignRestaurantManagementSystem/services/restaurant"
 
 	"github.com/gin-gonic/gin"
 )
 
 type RestaurantHandler struct {
-	*BaseHandler
-	restaurantService *restaurant.RestaurantService
+	interfaces.BaseHandlerInterface
+	restaurantService interfaces.RestaurantServiceInterface
 }
 
-func NewRestaurantHandler(base *BaseHandler, service *restaurant.RestaurantService) *RestaurantHandler {
+func NewRestaurantHandler(base interfaces.BaseHandlerInterface, service interfaces.RestaurantServiceInterface) *RestaurantHandler {
 	return &RestaurantHandler{
-		BaseHandler:       base,
-		restaurantService: service,
+		BaseHandlerInterface: base,
+		restaurantService:    service,
 	}
 }
 

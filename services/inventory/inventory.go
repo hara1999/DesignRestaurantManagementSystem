@@ -1,6 +1,7 @@
 package inventory
 
 import (
+	"DesignRestaurantManagementSystem/interfaces"
 	itemModel "DesignRestaurantManagementSystem/models/item"
 	"errors"
 	"fmt"
@@ -10,7 +11,7 @@ type InventoryManagementService struct {
 	Items []*itemModel.Item
 }
 
-func NewInventoryManagementService() *InventoryManagementService {
+func NewInventoryManagementService() interfaces.InventoryManagementServiceInterface {
 	return &InventoryManagementService{
 		Items: make([]*itemModel.Item, 0),
 	}
