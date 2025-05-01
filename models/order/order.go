@@ -1,6 +1,7 @@
-package main
+package order
 
 import (
+	"DesignRestaurantManagementSystem/models/dish"
 	"errors"
 )
 
@@ -9,15 +10,16 @@ type OrderStatus string
 const (
 	OnProcess OrderStatus = "OnProcess"
 	Processed OrderStatus = "Processed"
+	Canceled  OrderStatus = "Canceled"
 )
 
 type Order struct {
 	OrderID string
-	Dish    []*Dish
+	Dish    []*dish.Dish
 	Status  OrderStatus
 }
 
-func NewOrder(orderID string, dish []*Dish) *Order {
+func NewOrder(orderID string, dish []*dish.Dish) *Order {
 	return &Order{
 		OrderID: orderID,
 		Dish:    dish,
@@ -25,11 +27,11 @@ func NewOrder(orderID string, dish []*Dish) *Order {
 	}
 }
 
-func (o *Order) AddDish(dish *Dish) {
+func (o *Order) AddDish(dish *dish.Dish) {
 	o.Dish = append(o.Dish, dish)
 }
 
-func (o *Order) GetDishByName(dishName string) (*Dish, error) {
+func (o *Order) GetDishByName(dishName string) (*dish.Dish, error) {
 	for _, dish := range o.Dish {
 		if dish.DishName == dishName {
 			return dish, nil

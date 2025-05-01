@@ -1,6 +1,9 @@
-package main
+package menu
 
-import "errors"
+import (
+	"DesignRestaurantManagementSystem/models/dish"
+	"errors"
+)
 
 type MenuType string
 
@@ -11,21 +14,21 @@ const (
 
 type Menu struct {
 	Type MenuType
-	Dish []*Dish
+	Dish []*dish.Dish
 }
 
 func NewMenu(Type MenuType) *Menu {
 	return &Menu{
 		Type: Type,
-		Dish: make([]*Dish, 0),
+		Dish: make([]*dish.Dish, 0),
 	}
 }
 
-func (m *Menu) AddDish(dish *Dish) {
+func (m *Menu) AddDish(dish *dish.Dish) {
 	m.Dish = append(m.Dish, dish)
 }
 
-func (m *Menu) GetDishByName(dishName string) (*Dish, error) {
+func (m *Menu) GetDishByName(dishName string) (*dish.Dish, error) {
 	for _, dish := range m.Dish {
 		if dish.DishName == dishName {
 			return dish, nil

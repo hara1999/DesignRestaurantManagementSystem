@@ -1,6 +1,9 @@
-package main
+package dish
 
-import "errors"
+import (
+	"DesignRestaurantManagementSystem/models/item"
+	"errors"
+)
 
 type DishStatus string
 
@@ -12,7 +15,7 @@ const (
 type Dish struct {
 	DishName     string
 	Price        int
-	Item         []*Item
+	Item         []*item.Item
 	Availability DishStatus
 }
 
@@ -20,16 +23,16 @@ func NewDish(dishName string, price int) *Dish {
 	return &Dish{
 		DishName:     dishName,
 		Price:        price,
-		Item:         make([]*Item, 0),
+		Item:         make([]*item.Item, 0),
 		Availability: DISH_AVAILABLE,
 	}
 }
 
-func (d *Dish) AddItem(item *Item) {
+func (d *Dish) AddItem(item *item.Item) {
 	d.Item = append(d.Item, item)
 }
 
-func (d *Dish) GetItemByName(itemName string) (*Item, error) {
+func (d *Dish) GetItemByName(itemName string) (*item.Item, error) {
 	for _, item := range d.Item {
 		if item.ItemName == itemName {
 			return item, nil
@@ -38,9 +41,9 @@ func (d *Dish) GetItemByName(itemName string) (*Item, error) {
 	return nil, errors.New("no item found")
 }
 
-func (d *Dish) GetItemsWithNames() ([]*Item, []string, error) {
+func (d *Dish) GetItemsWithNames() ([]*item.Item, []string, error) {
 	var itemNames []string
-	var items []*Item
+	var items []*item.Item
 	for _, item := range d.Item {
 		itemNames = append(itemNames, item.ItemName)
 		items = append(items, item)

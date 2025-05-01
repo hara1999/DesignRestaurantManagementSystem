@@ -1,4 +1,9 @@
-package main
+package bill
+
+import (
+	"DesignRestaurantManagementSystem/models/order"
+	"DesignRestaurantManagementSystem/models/payment"
+)
 
 type DishDetails struct {
 	DishName string
@@ -14,11 +19,11 @@ func NewDishDetails(dishName string, price int) *DishDetails {
 
 type Bill struct {
 	DishDetails []*DishDetails
-	PaymentMode PaymentMode
+	PaymentMode payment.PaymentMode
 	TotalAmount int
 }
 
-func NewBill(order *Order, paymentMode PaymentMode, totalAmount int) *Bill {
+func NewBill(order *order.Order, paymentMode payment.PaymentMode, totalAmount int) *Bill {
 
 	bill := &Bill{
 		PaymentMode: paymentMode,
