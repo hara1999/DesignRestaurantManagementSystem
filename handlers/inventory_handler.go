@@ -19,20 +19,18 @@ func NewInventoryHandler(base interfaces.BaseHandlerInterface, service interface
 	}
 }
 
-type AddItemRequest struct {
-	Name     string `json:"name" binding:"required,min=1"`
-	Quantity int    `json:"quantity" binding:"required,min=1"`
-}
-
 func (h *InventoryHandler) AddItem(c *gin.Context) {
-	var req AddItemRequest
+	var req item.AddItemRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		h.ValidationError(c, err)
 		return
 	}
 
-	item := item.NewItem(req.Name, req.Quantity)
-	h.inventoryService.AddItem(item)
+	item, err := h.inventoryService.AddItem(req.Name, req.Quantity)
+	if err != nil {
+		h.ErrorResponse(c, 400, err.Error())
+		return
+	}
 	h.SuccessResponse(c, 201, item)
 }
 
@@ -42,7 +40,7 @@ func (h *InventoryHandler) GetInventory(c *gin.Context) {
 }
 
 func (h *InventoryHandler) UpdateItemQuantity(c *gin.Context) {
-	var req AddItemRequest
+	var req item.AddItemRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		h.ValidationError(c, err)
 		return
@@ -71,4 +69,24 @@ func (h *InventoryHandler) RemoveItem(c *gin.Context) {
 	}
 
 	h.SuccessResponse(c, 200, gin.H{"message": "Item removed successfully"})
+}
+
+func (h *InventoryHandler) GetItemByStatus(c *gin.Context) {
+	status := c.Query("status")
+	if status == "" {
+		h.ErrorResponse(c, 400, "Status is required")
+		return
+	}
+
+	items, err := h.inventoryService.GetItemByStatus(status)
+	if err != nil {
+		h.ErrorResponse(c, 400, err.Error())
+		return
+	}
+	h.SuccessResponse(c, 200, items)
+}
+
+func (h *InventoryHandler) RemoveExpiredItems(c *gin.Context) {
+	expiredItems := h.inventoryService.RemoveExpiredItems()
+	h.SuccessResponse(c, 200, expiredItems)
 }

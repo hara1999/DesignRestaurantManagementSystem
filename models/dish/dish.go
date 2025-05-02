@@ -19,11 +19,11 @@ type Dish struct {
 	Availability DishStatus
 }
 
-func NewDish(dishName string, price int) *Dish {
+func NewDish(dishName string, price int, items []*item.Item) *Dish {
 	return &Dish{
 		DishName:     dishName,
 		Price:        price,
-		Item:         make([]*item.Item, 0),
+		Item:         items,
 		Availability: DISH_AVAILABLE,
 	}
 }

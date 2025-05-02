@@ -17,8 +17,15 @@ func NewInventoryManagementService() interfaces.InventoryManagementServiceInterf
 	}
 }
 
-func (ims *InventoryManagementService) AddItem(item *itemModel.Item) {
-	ims.Items = append(ims.Items, item)
+func (ims *InventoryManagementService) AddItem(itemName string, quantity int) (*itemModel.Item, error) {
+	var item *itemModel.Item
+	_, err := ims.GetItemByName(itemName)
+	if err != nil {
+		item = itemModel.NewItem(itemName, quantity)
+		ims.Items = append(ims.Items, item)
+		return item, nil
+	}
+	return nil, errors.New("item already exists")
 }
 
 func (ims *InventoryManagementService) GetItemByName(itemName string) (*itemModel.Item, error) {
@@ -55,16 +62,44 @@ func (ims *InventoryManagementService) UpdateItemQuantity(itemName string, quant
 	if err != nil {
 		return fmt.Errorf("UpdateItemQuantity: %w", err)
 	}
-	item.Quantity = quantity
+
+	if item.Status == itemModel.ItemStatusExpired {
+		ims.Items = append(ims.Items, itemModel.NewItem(itemName, 0))
+	}
+
+	item.Quantity = item.Quantity + quantity
 	return nil
 }
 
 func (ims *InventoryManagementService) RemoveItem(itemName string) error {
-	for i, item := range ims.Items {
-		if item.ItemName == itemName {
-			ims.Items = append(ims.Items[:i], ims.Items[i+1:]...)
-			return nil
+	item, err := ims.GetItemByName(itemName)
+	if err != nil {
+		return fmt.Errorf("RemoveItem: %w", err)
+	}
+	item.Status = itemModel.ItemStatusExpired
+	return nil
+}
+
+func (ims *InventoryManagementService) GetItemByStatus(status string) ([]*itemModel.Item, error) {
+	var items []*itemModel.Item
+	for _, item := range ims.Items {
+		if item.Status == itemModel.ItemStatus(status) {
+			items = append(items, item)
 		}
 	}
-	return fmt.Errorf("RemoveItem: %w", errors.New("item not found"))
+	return items, nil
+}
+
+func (ims *InventoryManagementService) RemoveExpiredItems() []*itemModel.Item {
+
+	expiredItems := make([]*itemModel.Item, 0)
+
+	for i, item := range ims.Items {
+		if item.Status == itemModel.ItemStatusExpired {
+			expiredItems = append(expiredItems, item)
+			ims.Items = append(ims.Items[:i], ims.Items[i+1:]...)
+		}
+	}
+
+	return expiredItems
 }

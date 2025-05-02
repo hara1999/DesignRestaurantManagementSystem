@@ -43,7 +43,7 @@ func checkQuantity(available []*itemModel.Item, needed []*itemModel.Item) error 
 }
 
 func (os *OrderManagementService) checkDishAvailability(dishName string, menuType menuModel.MenuType) (*dishModel.Dish, error) {
-	menu, err := os.restaurant.GetMenuByType(menuType)
+	menu, err := os.restaurant.GetMenuByType(string(menuType))
 	if err != nil {
 		return nil, fmt.Errorf("CheckDishAvailability: %w", err)
 	}

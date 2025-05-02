@@ -5,6 +5,8 @@ import (
 	"fmt"
 
 	"DesignRestaurantManagementSystem/interfaces"
+	dishModel "DesignRestaurantManagementSystem/models/dish"
+	itemModel "DesignRestaurantManagementSystem/models/item"
 	menuModel "DesignRestaurantManagementSystem/models/menu"
 	tableModel "DesignRestaurantManagementSystem/models/table"
 )
@@ -15,7 +17,7 @@ type RestaurantService struct {
 	Table []*tableModel.Table
 }
 
-func NewRestaurant(name string) interfaces.RestaurantServiceInterface {
+func NewRestaurantService(name string) interfaces.RestaurantServiceInterface {
 	return &RestaurantService{
 		Name:  name,
 		Menu:  make([]*menuModel.Menu, 0),
@@ -23,22 +25,60 @@ func NewRestaurant(name string) interfaces.RestaurantServiceInterface {
 	}
 }
 
-func (r *RestaurantService) AddMenu(menu *menuModel.Menu) {
+func (r *RestaurantService) AddMenu(menuReq menuModel.AddMenuRequest) error {
+
+	for _, menu := range r.Menu {
+		if menu.Type == menuModel.MenuType(menuReq.MenuType) {
+			return fmt.Errorf("menu %s already exists", menuReq.MenuType)
+		}
+	}
+
+	menu := menuModel.NewMenu(menuModel.MenuType(menuReq.MenuType))
 	r.Menu = append(r.Menu, menu)
+	for _, dish := range menuReq.Dish {
+		err := r.AddDish(dish)
+		if err != nil {
+			return fmt.Errorf("dish %s: %w", dish.Name, err)
+		}
+	}
+	return nil
 }
 
-func (r *RestaurantService) GetMenuByType(menuType menuModel.MenuType) (*menuModel.Menu, error) {
+func (r *RestaurantService) AddDish(dishReq dishModel.AddDishRequest) error {
+	menu, err := r.GetMenuByType(dishReq.MenuType)
+	if err != nil {
+		return fmt.Errorf("menu %s: %w", dishReq.MenuType, err)
+	}
+
+	for _, dish := range menu.Dish {
+		if dish.DishName == dishReq.Name {
+			return fmt.Errorf("dish %s already exists", dishReq.Name)
+		}
+	}
+
+	var items []*itemModel.Item
+	for _, item := range dishReq.Items {
+		items = append(items, itemModel.NewItem(item.Name, item.Quantity))
+	}
+
+	dish := dishModel.NewDish(dishReq.Name, dishReq.Price, items)
+	menu.AddDish(dish)
+	return nil
+}
+
+func (r *RestaurantService) AddTable(tableReq tableModel.AddTableRequest) error {
+	table := tableModel.NewTable(tableReq.TableID)
+	r.Table = append(r.Table, table)
+	return nil
+}
+
+func (r *RestaurantService) GetMenuByType(menuType string) (*menuModel.Menu, error) {
 	for _, menu := range r.Menu {
-		if menu.Type == menuType {
+		if menu.Type == menuModel.MenuType(menuType) {
 			return menu, nil
 		}
 	}
 	return nil, errors.New("no menu found")
-}
-
-func (r *RestaurantService) AddTable(table *tableModel.Table) {
-
-	r.Table = append(r.Table, table)
 }
 
 func (r *RestaurantService) GetTableByID(tableID string) (*tableModel.Table, error) {
@@ -74,5 +114,43 @@ func (r *RestaurantService) ReserveTable(tableIDs []string) error {
 		}
 		table.Status = tableModel.BOOKED
 	}
+	return nil
+}
+
+func (r *RestaurantService) UpdateDish(dishReq dishModel.AddDishRequest) error {
+	menu, err := r.GetMenuByType(dishReq.MenuType)
+	if err != nil {
+		return fmt.Errorf("menu %s: %w", dishReq.MenuType, err)
+	}
+
+	dish, err := menu.GetDishByName(dishReq.Name)
+	if err != nil {
+		return fmt.Errorf("dish %s: %w", dishReq.Name, err)
+	}
+
+	dish.Price = dishReq.Price
+
+	if len(dishReq.Items) > 0 {
+		dish.Item = make([]*itemModel.Item, 0)
+		for _, item := range dishReq.Items {
+			dish.AddItem(itemModel.NewItem(item.Name, item.Quantity))
+		}
+	}
+
+	return nil
+}
+
+func (r *RestaurantService) RemoveDish(menuType string, dishName string) error {
+	menu, err := r.GetMenuByType(menuType)
+	if err != nil {
+		return fmt.Errorf("menu %s: %w", menuType, err)
+	}
+
+	dish, err := menu.GetDishByName(dishName)
+	if err != nil {
+		return fmt.Errorf("dish %s: %w", dishName, err)
+	}
+
+	menu.RemoveDish(dish)
 	return nil
 }

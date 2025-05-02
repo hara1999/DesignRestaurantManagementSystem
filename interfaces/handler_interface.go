@@ -10,9 +10,15 @@ type BaseHandlerInterface interface {
 }
 
 type RestaurantHandlerInterface interface {
+	AddMenu(c *gin.Context)
 	AddTable(c *gin.Context)
+	AddDish(c *gin.Context)
+	GetMenuByType(c *gin.Context)
+	GetTableByID(c *gin.Context)
 	GetTables(c *gin.Context)
 	ReserveTable(c *gin.Context)
+	UpdateDish(c *gin.Context)
+	RemoveDish(c *gin.Context)
 }
 
 type OrderHandlerInterface interface {
@@ -33,11 +39,6 @@ type InventoryHandlerInterface interface {
 	GetInventory(c *gin.Context)
 	UpdateItemQuantity(c *gin.Context)
 	RemoveItem(c *gin.Context)
-}
-
-type MenuHandlerInterface interface {
-	AddDish(c *gin.Context)
-	GetMenu(c *gin.Context)
-	UpdateDish(c *gin.Context)
-	RemoveDish(c *gin.Context)
+	GetItemByStatus(c *gin.Context)
+	RemoveExpiredItems(c *gin.Context)
 }

@@ -14,7 +14,6 @@ type Router struct {
 	orderHandler      interfaces.OrderHandlerInterface
 	paymentHandler    interfaces.PaymentHandlerInterface
 	inventoryHandler  interfaces.InventoryHandlerInterface
-	menuHandler       interfaces.MenuHandlerInterface
 }
 
 func NewRouter(
@@ -31,7 +30,6 @@ func NewRouter(
 		orderHandler:      handlers.NewOrderHandler(baseHandler, orderService),
 		paymentHandler:    handlers.NewPaymentHandler(baseHandler, paymentFactory),
 		inventoryHandler:  handlers.NewInventoryHandler(baseHandler, inventoryService),
-		menuHandler:       handlers.NewMenuHandler(baseHandler, restaurantService),
 	}
 }
 
@@ -41,9 +39,15 @@ func (r *Router) SetupRoutes() *gin.Engine {
 	// Restaurant routes
 	restaurantGroup := router.Group("/restaurant")
 	{
+		restaurantGroup.POST("/menu/add", r.restaurantHandler.AddMenu)
 		restaurantGroup.GET("/tables", r.restaurantHandler.GetTables)
 		restaurantGroup.POST("/tables/add", r.restaurantHandler.AddTable)
 		restaurantGroup.POST("/tables/reserve", r.restaurantHandler.ReserveTable)
+		restaurantGroup.GET("/menu", r.restaurantHandler.GetMenuByType)
+		restaurantGroup.POST("/dish/add", r.restaurantHandler.AddDish)
+		restaurantGroup.POST("/dish/update", r.restaurantHandler.UpdateDish)
+		restaurantGroup.POST("/dish/remove", r.restaurantHandler.RemoveDish)
+		restaurantGroup.GET("/table", r.restaurantHandler.GetTableByID)
 	}
 
 	// Order routes
@@ -67,17 +71,10 @@ func (r *Router) SetupRoutes() *gin.Engine {
 	{
 		inventoryGroup.GET("", r.inventoryHandler.GetInventory)
 		inventoryGroup.POST("/add", r.inventoryHandler.AddItem)
-		inventoryGroup.POST("/update", r.inventoryHandler.UpdateItemQuantity)
-		inventoryGroup.POST("/remove", r.inventoryHandler.RemoveItem)
-	}
-
-	// Menu routes
-	menuGroup := router.Group("/menu")
-	{
-		menuGroup.GET("", r.menuHandler.GetMenu)
-		menuGroup.POST("/add", r.menuHandler.AddDish)
-		menuGroup.POST("/update", r.menuHandler.UpdateDish)
-		menuGroup.POST("/remove", r.menuHandler.RemoveDish)
+		inventoryGroup.PUT("/update", r.inventoryHandler.UpdateItemQuantity)
+		inventoryGroup.POST("/expire", r.inventoryHandler.RemoveItem)
+		inventoryGroup.GET("/status", r.inventoryHandler.GetItemByStatus)
+		inventoryGroup.DELETE("/remove", r.inventoryHandler.RemoveExpiredItems)
 	}
 
 	return router

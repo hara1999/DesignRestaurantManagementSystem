@@ -18,7 +18,7 @@ func main() {
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
 
 	// Initialize services
-	restaurantService := restaurantService.NewRestaurant("Mondal's Restaurant")
+	restaurantService := restaurantService.NewRestaurantService("Mondal's Restaurant")
 	inventoryService := inventoryService.NewInventoryManagementService()
 	paymentFactory := factory.NewPaymentFactory()
 	paymentFactory.AddPaymentService(paymentModel.CASH, paymentService.NewCashPayment())
@@ -39,7 +39,7 @@ func main() {
 	// Start server
 	port := os.Getenv("PORT")
 	if port == "" {
-		port = "8080"
+		port = "9090"
 	}
 
 	logger.Info("Starting server", "port", port)

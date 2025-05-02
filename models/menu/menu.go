@@ -37,3 +37,11 @@ func (m *Menu) GetDishByName(dishName string) (*dish.Dish, error) {
 
 	return nil, errors.New("no dish found")
 }
+
+func (m *Menu) RemoveDish(dish *dish.Dish) {
+	for i, d := range m.Dish {
+		if d == dish {
+			m.Dish = append(m.Dish[:i], m.Dish[i+1:]...)
+		}
+	}
+}
